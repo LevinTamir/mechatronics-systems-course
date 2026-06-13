@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
@@ -186,20 +188,22 @@ for i in range(len(t)):
 # ==================================================
 # Save figures
 # ==================================================
-output_dir = "figs/"
+output_dir = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
+)
 ensure_output_dir(output_dir)
 
 r_values = np.array([r(ti) for ti in t])
 
 plot_tracking_and_control(
     t, r_values, ym, y, u_values,
-    output_dir, "nominal_tracking_and_control.png",
+    output_dir, "section3_nominal_tracking_and_control.png",
     title_prefix="Nominal Control",
 )
 
 plot_errors(
     t, e, z,
-    output_dir, "nominal_errors.png",
+    output_dir, "section3_nominal_errors.png",
     title_prefix="Nominal Control",
 )
 

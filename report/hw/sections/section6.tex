@@ -1,0 +1,147 @@
+% ==================================================
+% Section 6
+% ==================================================
+\section{Sampling-Time Effect and a Bilinear (Tustin) Redesign}
+
+The discrete-time controller of Section~5 used the simplest approximations: the
+error derivatives were computed with backward differences and the adaptation law
+was integrated with forward Euler. These are only accurate when the sampling
+period \(T_s\) is small. In this section we first show how the closed-loop
+performance gets worse as \(T_s\) grows, explain why, and then present an
+improved discrete-time design based on the bilinear (Tustin) transform.
+
+\subsection{Performance Degradation with Increasing Sampling Time}
+
+The Section~5 controller was simulated for several sampling periods, keeping the
+continuous-time plant, the reference model and all controller gains the same.
+Figure~\ref{fig:s6_degradation} shows the tracking error \(e(t)\) and the
+filtered error \(z(t)\) for \(T_s = 0.01,\,0.04,\,0.05~\mathrm{s}\). The peak
+tracking error grows as \(T_s\) increases, and the filtered error \(z(t)\) shows
+a larger spike at start-up.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figs/hw/section6_degradation.png}
+\caption{Baseline (Section~5) controller: tracking error \(e(t)\) (top) and
+filtered error \(z(t)\) (bottom) for increasing sampling periods.}
+\label{fig:s6_degradation}
+\end{figure}
+
+\noindent The main cause is the second backward difference used to estimate
+\(\ddot{e}\),
+\begin{equation}
+\ddot{e}[k] \approx \frac{e[k]-2e[k-1]+e[k-2]}{T_s^{2}},
+\label{eq:s6_secdiff}
+\end{equation}
+whose gain grows like \(1/T_s^{2}\). Together with the half-sample delay of the
+zero-order hold, this term amplifies the sampled error and feeds it back through
+\(z[k]=\ddot{e}[k]+\lambda_2\dot{e}[k]+\lambda_1 e[k]\) and the control law. As
+\(T_s\) grows the loop loses phase margin, and at \(T_s\approx0.06~\mathrm{s}\)
+the closed loop becomes unstable and the simulation diverges
+(Table~\ref{tab:s6_compare}). The forward-Euler integration of the adaptation law
+adds a smaller error of the same kind.
+
+\subsection{Improved Design: Bilinear (Tustin) Discretisation}
+
+To recover good performance without reducing \(T_s\), the controller is
+re-discretised with the bilinear (Tustin) transform,
+\begin{equation}
+s \;\longleftarrow\; \frac{2}{T_s}\,\frac{z-1}{z+1},
+\label{eq:s6_tustin}
+\end{equation}
+which gives a more accurate approximation of the continuous-time dynamics than
+the forward-difference rule \(s\leftarrow(z-1)/T_s\).
+
+\paragraph{Filtered (dirty) derivatives.}
+A pure differentiator cannot be implemented directly, so each error derivative is
+taken from a first-order filtered (``dirty'') derivative
+\(H(s)=\dfrac{s}{\tau s+1}\), which is proper and band-limited (\(\tau\) is a
+small filter time constant). Applying the bilinear
+transform~\eqref{eq:s6_tustin} to \(H(s)\) and writing \(a = 2/T_s\) gives
+\begin{equation}
+\dot{\hat{e}}[k]=
+\frac{a\big(e[k]-e[k-1]\big)-(1-\tau a)\,\dot{\hat{e}}[k-1]}{\tau a+1},
+\label{eq:s6_dirty}
+\end{equation}
+and \(\ddot{\hat{e}}[k]\) is obtained by applying the same filter again to
+\(\dot{\hat{e}}[k]\). Unlike~\eqref{eq:s6_secdiff}, the gain of
+\eqref{eq:s6_dirty} is bounded, so high-frequency content is not amplified by
+\(1/T_s^{2}\).
+
+\paragraph{Trapezoidal adaptation.}
+The adaptation law \(\dot{\hat{\theta}}=-\Gamma\,\varphi z\) is integrated with
+the trapezoidal (Tustin) rule instead of forward Euler:
+\begin{equation}
+\hat{\theta}[k]=\hat{\theta}[k-1]
+-\frac{T_s}{2}\,\Gamma\big(\varphi[k]z[k]+\varphi[k-1]z[k-1]\big).
+\label{eq:s6_trap}
+\end{equation}
+The filtered error \(z[k]\), the auxiliary reference \(y_r^{(3)}[k]\) and the
+control law \(u[k]\) are computed as before, using \eqref{eq:s6_dirty} for the
+derivatives.
+
+\subsection{Simulation Results and Discussion}
+
+Table~\ref{tab:s6_compare} compares the peak tracking error of the baseline and
+the redesigned controller for different \(T_s\) (\(\tau=0.06~\mathrm{s}\)).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c c c}
+\hline
+\(T_s\) [s] & Baseline \(\max|e|\) & Tustin \(\max|e|\)\\
+\hline
+0.01  & 0.038 & 0.064 \\
+0.04  & 0.085 & 0.070 \\
+0.05  & 0.105 & 0.082 \\
+0.06  & \emph{diverges} & 0.104 \\
+0.07  & \emph{diverges} & 0.090 \\
+0.075 & \emph{diverges} & 0.105 \\
+0.08  & \emph{diverges} & \emph{diverges}\\
+\hline
+\end{tabular}
+\caption{Peak tracking error \(\max_{t>1\,\mathrm{s}}|e(t)|\) versus sampling
+period.}
+\label{tab:s6_compare}
+\end{table}
+
+\noindent Two things can be seen. First, at the largest sampling period where the
+baseline is still stable (\(T_s=0.05~\mathrm{s}\)) the redesign lowers the peak
+error from \(0.105\) to \(0.082~\mathrm{rad}\) and reduces the overshoot, as
+shown in Figure~\ref{fig:s6_fix}. Second, the redesign stays stable up to
+\(T_s\approx0.075~\mathrm{s}\), well past the \(T_s\approx0.06~\mathrm{s}\) where
+the baseline diverges, so the microcontroller can run at a lower sampling rate.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figs/hw/section6_tustin_fix.png}
+\caption{Closed loop at \(T_s=0.05~\mathrm{s}\): output tracking (top) and
+tracking error (bottom), for the baseline and the Tustin redesign.}
+\label{fig:s6_fix}
+\end{figure}
+
+\noindent Figure~\ref{fig:s6_params} shows that the parameter estimates of the
+redesigned controller at \(T_s=0.06~\mathrm{s}\) -- where the baseline cannot run
+-- stay bounded and follow the same trajectories as the well-sampled reference
+(\(T_s=0.01~\mathrm{s}\)). As in Sections~4 and~5 they do not converge to the
+true values, because the step reference is not persistently exciting.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figs/hw/section6_parameter_comparison.png}
+\caption{Parameter estimates \(\hat{\theta}_i(t)\): well-sampled baseline
+(\(T_s=0.01~\mathrm{s}\)) and the Tustin redesign at \(T_s=0.06~\mathrm{s}\).}
+\label{fig:s6_params}
+\end{figure}
+
+\noindent The only downside of the redesign is a slightly larger error at very
+small sampling periods (\(T_s=0.01~\mathrm{s}\) in Table~\ref{tab:s6_compare}),
+where the dirty-derivative filter adds a small phase lag that the raw backward
+difference does not. This is a small price, since the point of the redesign is to
+allow coarse sampling, and in that range it is consistently better. In short,
+discretising the controller with the bilinear transform -- filtered
+derivatives~\eqref{eq:s6_dirty} and trapezoidal integration of the adaptation
+law~\eqref{eq:s6_trap} -- reduces the performance loss caused by the
+discrete-time implementation and allows a larger sampling period.
+
+\bigskip

@@ -219,7 +219,9 @@ theta_hat_vals = np.array(theta_hat_hist).T  # shape (6, n_times) for plot_utils
 # ==================================================
 # Save figures
 # ==================================================
-output_dir = "figs/"
+output_dir = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
+)
 ensure_output_dir(output_dir)
 
 # --------------------------------------------------
@@ -301,7 +303,7 @@ axes[1].set_ylabel(r"$u_k$")
 axes[1].set_title("Discrete control input")
 axes[1].grid(True)
 fig.tight_layout()
-fig.savefig(os.path.join(output_dir, "discrete_vs_continuous_tracking.png"), dpi=300)
+fig.savefig(os.path.join(output_dir, "section5_discrete_vs_continuous_tracking.png"), dpi=300)
 
 # --------------------------------------------------
 # Errors comparison: discrete vs continuous
@@ -321,7 +323,7 @@ axes[1].set_title("Filtered tracking error")
 axes[1].grid(True)
 axes[1].legend()
 fig.tight_layout()
-fig.savefig(os.path.join(output_dir, "discrete_vs_continuous_errors.png"), dpi=300)
+fig.savefig(os.path.join(output_dir, "section5_discrete_vs_continuous_errors.png"), dpi=300)
 
 # --------------------------------------------------
 # Parameter estimates comparison: discrete vs continuous
@@ -347,7 +349,7 @@ for i in range(6):
 axes[-1].set_xlabel("Time [s]")
 axes[0].set_title("Discrete vs. Continuous Adaptive Control: Parameter Estimates")
 fig.tight_layout()
-fig.savefig(os.path.join(output_dir, "discrete_vs_continuous_parameters.png"), dpi=300)
+fig.savefig(os.path.join(output_dir, "section5_discrete_vs_continuous_parameters.png"), dpi=300)
 
 # --------------------------------------------------
 # ZOH detail: zoomed staircase view of u(t)
@@ -367,7 +369,7 @@ ax.set_title(
 ax.grid(True)
 ax.legend(loc="best")
 fig.tight_layout()
-fig.savefig(os.path.join(output_dir, "discrete_u_zoh_detail.png"), dpi=300)
+fig.savefig(os.path.join(output_dir, "section5_discrete_u_zoh_detail.png"), dpi=300)
 
 plt.show()
 

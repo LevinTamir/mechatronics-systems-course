@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
@@ -194,19 +196,19 @@ def run_simulation(r_func, suffix, title_prefix, t_end):
 
     plot_tracking_and_control(
         t, r_values, ym, y, u_values,
-        output_dir, f"adaptive_tracking_and_control_{suffix}.png",
+        output_dir, f"section4_adaptive_tracking_and_control_{suffix}.png",
         title_prefix=title_prefix,
     )
 
     plot_errors(
         t, e, z,
-        output_dir, f"adaptive_errors_{suffix}.png",
+        output_dir, f"section4_adaptive_errors_{suffix}.png",
         title_prefix=title_prefix,
     )
 
     plot_parameter_estimates(
         t, theta_hat, theta_true, param_labels,
-        output_dir, f"adaptive_parameter_estimates_{suffix}.png",
+        output_dir, f"section4_adaptive_parameter_estimates_{suffix}.png",
         title_prefix=title_prefix,
     )
 
@@ -218,7 +220,9 @@ def run_simulation(r_func, suffix, title_prefix, t_end):
 # ==================================================
 # Run both cases
 # ==================================================
-output_dir = "figs/"
+output_dir = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
+)
 ensure_output_dir(output_dir)
 
 param_labels = [
