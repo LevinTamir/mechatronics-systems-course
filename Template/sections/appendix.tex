@@ -1,0 +1,47 @@
+% ==================================================
+% Appendix
+% ==================================================
+\appendix
+\section*{Appendix}
+
+This appendix includes supplementary material, additional plots, or detailed explanations
+that support the main content of the report.
+
+\subsection*{A. Additional Figures}
+
+If you have extra plots or visualizations that do not fit into the main sections,
+place them here for reference.
+
+\begin{figure}[h]
+    \centering
+    % Example placeholder box (remove once you add a real plot)
+    \fbox{\rule{0pt}{2in}\rule{0.75\linewidth}{0pt}}
+    \caption{Additional plot demonstrating extended training or comparison.}
+    \label{fig:appendix-example}
+\end{figure}
+
+\subsection*{B. Extended Tables}
+
+Tables with additional metrics or hyperparameters can go here.
+
+\subsection*{C. Code Listings}
+
+You can include key snippets or entire scripts here for reference.
+
+\begin{lstlisting}[caption={Example training loop}, label={lst:train-loop}]
+for episode in range(num_episodes):
+    state, _ = env.reset()
+    done = False
+    while not done:
+        action = select_action(state, policy_net, epsilon)
+        next_state, reward, terminated, truncated, _ = env.step(action)
+        done = terminated or truncated
+        memory.push(state, action, reward, next_state, done)
+        optimize_model()
+        state = next_state
+\end{lstlisting}
+
+\subsection*{D. Notes}
+
+If needed, include derivations, pseudo-code, or extra explanations that extend the discussion
+in the main sections.
