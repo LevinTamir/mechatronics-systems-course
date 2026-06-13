@@ -23,6 +23,30 @@ venv/
 env/
 .ipynb_checkpoints/
 
+# ---- LaTeX build artifacts ----
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.synctex.gz
+*.synctex(busy)
+*.fdb_latexmk
+*.pdfsync
+*.nav
+*.snm
+*.vrb
+
 # ---- OS / Editor ----
 .DS_Store
 Thumbs.db
