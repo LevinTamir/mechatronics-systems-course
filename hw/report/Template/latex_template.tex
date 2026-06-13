@@ -1,0 +1,142 @@
+% =========================================
+% Mechatronics Systems Course - Template
+% =========================================
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Encoding & Math ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}     % better font encoding for pdfLaTeX
+\usepackage{lmodern}         % best default Latin Modern font family
+\usepackage{amsmath, amssymb, amsfonts, mathtools, bm}
+
+% ---------- Page Layout ----------
+\usepackage[a4paper, margin=2.5cm]{geometry}   % required: 2.5 cm margins
+\usepackage{setspace}
+\setstretch{1.25}
+
+% ---------- Graphics ----------
+\usepackage{graphicx}
+\graphicspath{{../figs/}{./figs/}}
+\usepackage{float}
+\usepackage[font=footnotesize]{caption}
+
+% ---------- TikZ ----------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc}
+
+% ---------- Listings (Python code) ----------
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{orange},
+    commentstyle=\color{gray},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    rulecolor=\color{gray},
+    framerule=0.8pt,
+    xleftmargin=1em,
+    xrightmargin=1em,
+    aboveskip=1em,
+    belowskip=1em,
+    breaklines=true,
+    tabsize=4,
+    showstringspaces=false
+}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Lists & Section Spacing ----------
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.2em}
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{1.2\baselineskip}{0.6\baselineskip}
+\titlespacing*{\subsection}{0pt}{1.0\baselineskip}{0.5\baselineskip}
+\emergencystretch=2em
+
+% ---------- Header / Footer ----------
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\CourseName}
+\rhead{\CourseNumber}
+\cfoot{\thepage}
+
+% ---------- Metadata ----------
+\newcommand{\UniversityName}{Ben-Gurion University of the Negev}
+\newcommand{\FacultyName}{Faculty of Engineering Sciences}
+\newcommand{\DepartmentName}{Department of Software and Information Systems Engineering}
+
+\newcommand{\CourseName}{Deep Reinforcement Learning}
+\newcommand{\CourseNumber}{364-2-1031}
+\newcommand{\Semester}{Fall 2025}
+
+\newcommand{\HomeworkNumber}{N}
+\newcommand{\HomeworkTitle}{Tabular Q-Learning and DQN}
+\newcommand{\DueDate}{26/11/2025}
+
+\newcommand{\LecturerName}{Dr.~Gilad Katz}
+
+\newcommand{\StudentOneName}{Mark Feldman}
+\newcommand{\StudentOneID}{320827637}
+\newcommand{\StudentTwoName}{Tamir Levin}
+\newcommand{\StudentTwoID}{315765347}
+
+% ---------- Custom Environments ----------
+\newenvironment{question}[2]{%
+  \subsection*{Question #1: #2}%
+}{\vspace{0.15\baselineskip}}
+
+\newenvironment{shortanswer}{%
+  \noindent\textbf{}\ %
+}{\par\vspace{0.25\baselineskip}}
+
+\newenvironment{codeanswer}{%
+  \noindent\textbf{Code / Results.}\ %
+}{\par\vspace{0.5\baselineskip}}
+
+% =========================================
+
+\begin{document}
+
+% ================== Title Page ==================
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \includegraphics[width=0.2\textwidth]{bgu.png}\par\vspace{1cm}
+    {\scshape\Large \UniversityName\par}
+    {\Large \FacultyName\par}
+    {\large \DepartmentName\par}
+    \vspace{1.5cm}
+    {\LARGE \CourseName\par}
+    \vspace{1cm}
+    {\Huge\bfseries Assignment \#\HomeworkNumber\par}
+    \vspace{2cm}
+    {\large \textbf{Due date:} \DueDate\par}
+    \vspace{3cm}
+
+    \begin{flushleft}
+      \begin{tabular}{@{}p{3cm}l@{}}
+        \textbf{Lecturer:} & \LecturerName \\
+        \textbf{Students:} & \StudentOneName~(\StudentOneID),
+                             \ \StudentTwoName~(\StudentTwoID) \\
+      \end{tabular}
+    \end{flushleft}
+
+    \vfill
+\end{titlepage}
+
+% ================== Input Section Files ==================
+% \input{sections/section1.tex}
+% \input{sections/section2.tex}
+% \input{sections/section3.tex}
+% \input{sections/appendix.tex}
+
+\end{document}
