@@ -26,26 +26,20 @@ from scipy.integrate import solve_ivp
 from plot_utils import ensure_output_dir
 
 
-# ==================================================
 # Plant parameters (true -- unknown to the controller)
-# ==================================================
 a1, a2, a3 = 2.0, 3.0, 1.0
 b1, b2, b3 = 0.05, 0.1, 1.5
 c = 1.0
 theta_true = np.array([a1, a2, a3, b1, b2, b3])
 
-# ==================================================
 # Reference model parameters
-# ==================================================
 zeta, wn = 0.7, 2.0
 p3 = 10.0 * zeta * wn
 alpha2 = 2.0 * zeta * wn + p3
 alpha1 = wn**2 + 2.0 * zeta * wn * p3
 alpha0 = wn**2 * p3
 
-# ==================================================
 # Controller parameters
-# ==================================================
 lambda1, lambda2 = 4.0, 4.0
 kz = 5.0
 Gamma = 10.0 * np.eye(6)
@@ -73,14 +67,12 @@ def reference_model_derivative(t, xm):
     return np.array([ym_dot, ym_ddot, ym_3])
 
 
-# ==================================================
 # Sampled-data simulation
 #
 # method = "baseline": Section 5 controller
 #          (backward-difference derivatives + forward-Euler adaptation)
 # method = "tustin":   bilinear redesign
 #          (dirty-derivative s/(tau s+1) via Tustin + trapezoidal adaptation)
-# ==================================================
 def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
                      diverge_threshold=1e3):
     num_steps = int(t_end / Ts)
@@ -109,7 +101,7 @@ def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
         )
         e_k = y_k - ym_k
 
-        # ---------- error-derivative estimation ----------
+        # error-derivative estimation
         if method == "baseline":
             # Raw backward differences (Section 5)
             if k == 0:
@@ -126,7 +118,7 @@ def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
             d2 = (a * (d1 - d1_prev) - (1.0 - tau * a) * d2_prev) / (tau * a + 1.0)
             edot, eddot = d1, d2
             d1_prev, d2_prev = d1, d2
-        # -------------------------------------------------
+        # -
 
         z_k = eddot + lambda2 * edot + lambda1 * e_k
         yr_3_k = ym_3_k - lambda2 * eddot - lambda1 * edot
@@ -136,14 +128,14 @@ def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
         ])
         u_k = (theta_hat @ phi_k + yr_3_k - kz * z_k) / c
 
-        # ---------- adaptation law ----------
+        # adaptation law
         phiz = (Gamma @ phi_k) * z_k
         if method == "baseline":
             theta_hat = theta_hat - Ts * phiz                       # forward Euler
         else:
             theta_hat = theta_hat - 0.5 * Ts * (phiz + phiz_prev)   # trapezoidal (Tustin)
         phiz_prev = phiz
-        # ------------------------------------
+        # -
 
         t_log.append(t_k); y_log.append(y_k); ym_log.append(ym_k)
         e_log.append(e_k); z_log.append(z_k); u_log.append(u_k)
@@ -176,9 +168,7 @@ def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
     )
 
 
-# ==================================================
 # Run the simulations
-# ==================================================
 TS_CMP = 0.05    # largest Ts where both controllers are stable -- fair comparison
 
 deg = {Ts: run_discrete_sim(Ts, "baseline")
@@ -199,21 +189,21 @@ for Ts in (0.01, 0.04, 0.05, 0.06, 0.07, 0.075, 0.08):
     print(f"{Ts:6.3f} | {metric(rb):>20} | {metric(rt):>20}")
 
 
-# ==================================================
 # Figures
-# ==================================================
 output_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
 )
 ensure_output_dir(output_dir)
 
 
-# -------- Fig 1: graceful degradation of the baseline controller --------
+# Fig 1: graceful degradation of the baseline controller
 fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
 for Ts in (0.01, 0.02, 0.03, 0.04, 0.05):
     r = deg[Ts]
     axes[0].plot(r["t"], r["e"], label=f"$T_s={Ts:.2f}$ s")
     axes[1].plot(r["t"], r["z"], label=f"$T_s={Ts:.2f}$ s")
+axes[0].axhline(0.0, color="gray", linestyle=":", linewidth=1)   # perfect tracking
+axes[1].axhline(0.0, color="gray", linestyle=":", linewidth=1)
 axes[0].set_ylabel(r"$e(t)$ [rad]")
 axes[0].set_title("Baseline controller at different sampling times")
 axes[1].set_xlabel("Time [s]")
@@ -224,39 +214,42 @@ fig.tight_layout()
 fig.savefig(os.path.join(output_dir, "section6_degradation.png"), dpi=300)
 
 
-# -------- Fig 2: Tustin vs baseline at Ts=0.05, with a zoom on the transient --------
-fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
+# Fig 2: Tustin vs baseline at Ts=0.05 (full output, zoom, error)
+fig, axes = plt.subplots(3, 1, figsize=(8, 10))
+
+# full output
 axes[0].plot(tust_cmp["t"], tust_cmp["ym"], ":", color="gray", label=r"$y_m(t)$")
 axes[0].plot(base_cmp["t"], base_cmp["y"], color="C0", label="baseline")
-axes[0].plot(tust_cmp["t"], tust_cmp["y"], color="C1", label="Tustin redesign")
+axes[0].plot(tust_cmp["t"], tust_cmp["y"], color="C1", label="Tustin")
 axes[0].set_ylabel("Output [rad]")
-axes[0].set_title(fr"Baseline vs. Tustin redesign at $T_s={TS_CMP:.2f}$ s")
+axes[0].set_title(fr"Baseline vs. Tustin at $T_s={TS_CMP:.2f}$ s")
 axes[0].grid(True)
-axes[0].legend(loc="upper left")
+axes[0].legend(loc="lower right")
 
-# zoom inset on the part of the response where the two outputs differ most
+# zoom on the transient, where the two outputs differ most
 dy = np.abs(base_cmp["y"] - tust_cmp["y"])
 tp = base_cmp["t"][int(np.argmax(dy))]
-x0, x1 = max(0.0, tp - 0.7), tp + 1.8
+x0, x1 = max(0.0, tp - 0.7), tp + 2.8
 mask = (base_cmp["t"] >= x0) & (base_cmp["t"] <= x1)
 ys = np.concatenate([base_cmp["y"][mask], tust_cmp["y"][mask], tust_cmp["ym"][mask]])
 pad = 0.05 * (ys.max() - ys.min())
-axins = axes[0].inset_axes([0.50, 0.08, 0.46, 0.5])
-axins.plot(tust_cmp["t"], tust_cmp["ym"], ":", color="gray")
-axins.plot(base_cmp["t"], base_cmp["y"], color="C0")
-axins.plot(tust_cmp["t"], tust_cmp["y"], color="C1")
-axins.set_xlim(x0, x1)
-axins.set_ylim(ys.min() - pad, ys.max() + pad)
-axins.grid(True, alpha=0.4)
-axins.tick_params(labelsize=7)
-axes[0].indicate_inset_zoom(axins, edgecolor="black")
-
-axes[1].plot(base_cmp["t"], base_cmp["e"], color="C0", label="baseline")
-axes[1].plot(tust_cmp["t"], tust_cmp["e"], color="C1", label="Tustin redesign")
-axes[1].set_xlabel("Time [s]")
-axes[1].set_ylabel(r"$e(t)$ [rad]")
+axes[1].plot(tust_cmp["t"], tust_cmp["ym"], ":", color="gray", label=r"$y_m(t)$")
+axes[1].plot(base_cmp["t"], base_cmp["y"], color="C0", label="baseline")
+axes[1].plot(tust_cmp["t"], tust_cmp["y"], color="C1", label="Tustin")
+axes[1].set_xlim(x0, x1)
+axes[1].set_ylim(ys.min() - pad, ys.max() + pad)
+axes[1].set_ylabel("Output [rad]")
+axes[1].set_title("Zoomed-in")
 axes[1].grid(True)
-axes[1].legend()
+axes[1].legend(loc="lower right")
+
+# tracking error
+axes[2].plot(base_cmp["t"], base_cmp["e"], color="C0", label="baseline")
+axes[2].plot(tust_cmp["t"], tust_cmp["e"], color="C1", label="Tustin redesign")
+axes[2].set_xlabel("Time [s]")
+axes[2].set_ylabel(r"$e(t)$ [rad]")
+axes[2].grid(True)
+axes[2].legend(loc="lower right")
 fig.tight_layout()
 fig.savefig(os.path.join(output_dir, "section6_tustin_fix.png"), dpi=300)
 

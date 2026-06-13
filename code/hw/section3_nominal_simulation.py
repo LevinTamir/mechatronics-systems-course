@@ -10,9 +10,7 @@ from plot_utils import (
     plot_errors,
 )
 
-# ==================================================
 # Plant parameters
-# ==================================================
 a1 = 2.0
 a2 = 3.0
 a3 = 1.0
@@ -23,9 +21,7 @@ c = 1.0
 
 theta = np.array([a1, a2, a3, b1, b2, b3])
 
-# ==================================================
 # Reference model parameters
-# ==================================================
 zeta = 0.7
 wn = 2.0
 p3 = 10.0 * zeta * wn
@@ -39,25 +35,19 @@ print(f"alpha2 = {alpha2:.4f}")
 print(f"alpha1 = {alpha1:.4f}")
 print(f"alpha0 = {alpha0:.4f}")
 
-# ==================================================
 # Controller parameters
-# ==================================================
 lambda1 = 4.0
 lambda2 = 4.0
 kz = 5.0
 
 
-# ==================================================
 # Reference input
-# ==================================================
 def r(t):
     return np.pi / 4
 
-# ==================================================
 # Combined plant + reference model dynamics
 # State vector:
 # X = [y, y_dot, y_ddot, ym, ym_dot, ym_ddot]
-# ==================================================
 def closed_loop_dynamics(t, X):
     y, y_dot, y_ddot, ym, ym_dot, ym_ddot = X
 
@@ -114,9 +104,7 @@ def closed_loop_dynamics(t, X):
     ]
 
 
-# ==================================================
 # Simulation
-# ==================================================
 t_start = 0.0
 t_end = 20.0
 t_eval = np.linspace(t_start, t_end, 3000)
@@ -143,9 +131,7 @@ sol = solve_ivp(
 if not sol.success:
     raise RuntimeError("ODE solver failed: " + sol.message)
 
-# ==================================================
 # Post-processing
-# ==================================================
 t = sol.t
 y = sol.y[0]
 y_dot = sol.y[1]
@@ -185,9 +171,7 @@ for i in range(len(t)):
     u_values[i] = (theta @ phi + yr_3 - kz * z[i]) / c
 
 
-# ==================================================
 # Save figures
-# ==================================================
 output_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
 )

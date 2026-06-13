@@ -12,9 +12,7 @@ from plot_utils import (
 )
 
 
-# ==================================================
 # Plant parameters (true — unknown to the controller)
-# ==================================================
 a1 = 2.0
 a2 = 3.0
 a3 = 1.0
@@ -26,9 +24,7 @@ c = 1.0
 theta_true = np.array([a1, a2, a3, b1, b2, b3])
 
 
-# ==================================================
 # Reference model parameters
-# ==================================================
 zeta = 0.7
 wn = 2.0
 p3 = 10.0 * zeta * wn
@@ -43,9 +39,7 @@ print(f"alpha1 = {alpha1:.4f}")
 print(f"alpha0 = {alpha0:.4f}")
 
 
-# ==================================================
 # Controller parameters
-# ==================================================
 lambda1 = 4.0
 lambda2 = 4.0
 kz = 5.0
@@ -54,9 +48,7 @@ kz = 5.0
 Gamma = 10.0 * np.eye(6)
 
 
-# ==================================================
 # Reference input variants
-# ==================================================
 def r_step(t):
     return np.pi / 4
 
@@ -70,12 +62,10 @@ def r_pe(t):
     )
 
 
-# ==================================================
 # Combined plant + reference model + adaptation dynamics
 # State vector (12):
 # X = [y, y_dot, y_ddot, ym, ym_dot, ym_ddot,
 #      theta_hat_1, ..., theta_hat_6]
-# ==================================================
 def make_dynamics(r_func):
     def closed_loop_dynamics(t, X):
         y, y_dot, y_ddot, ym, ym_dot, ym_ddot = X[:6]
@@ -136,9 +126,7 @@ def make_dynamics(r_func):
     return closed_loop_dynamics
 
 
-# ==================================================
 # Run one simulation for a given reference and save figures
-# ==================================================
 def run_simulation(r_func, suffix, title_prefix, t_end):
     t_eval = np.linspace(0.0, t_end, 3000)
     X0 = np.zeros(12)
@@ -217,9 +205,7 @@ def run_simulation(r_func, suffix, title_prefix, t_end):
         print(f"  {label}: {est:+.4f}   (true {tru:+.4f}, err {est-tru:+.4f})")
 
 
-# ==================================================
 # Run both cases
-# ==================================================
 output_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "..", "report", "figs", "hw"
 )
