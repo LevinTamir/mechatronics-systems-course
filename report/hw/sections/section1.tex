@@ -5,9 +5,9 @@
 
 The selected nonlinear process is a single-link robotic manipulator actuated through a geared motor. The model is based on the classical single-link manipulator dynamics presented in \cite{spong1989robot}, where the arm motion is derived using the Euler--Lagrange formulation. This model serves as the foundation for the development of the third-order nonlinear system used in this assignment.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{figs/hw/single_link_robot_arm.png}
+    \includegraphics[width=0.6\textwidth]{figs/hw/single_link_robot_arm.png}
     \caption{Single-link robot arm actuated through a geared motor.}
     \label{fig:single_link_robot_arm}
 \end{figure}
@@ -17,8 +17,7 @@ The selected nonlinear process is a single-link robotic manipulator actuated thr
 J\ddot{y}+B\dot{y}+Mg\ell\sin(y)=\tau
 \label{eq:single_link_second_order}
 \end{equation}
-
-\noindent where \(J\) is the inertia, \(B\) is the damping coefficient, \(M\) is the mass of the link, \(\ell\) is the distance from the joint to the center of mass, \(g\) is gravity and \(\tau\) is the actuator torque.
+where \(J\) is the inertia, \(B\) is the damping coefficient, \(M\) is the mass of the link, \(\ell\) is the distance from the joint to the center of mass, \(g\) is gravity and \(\tau\) is the actuator torque.
 
 \subsection{Extension to a Third-Order Model}
 
@@ -27,13 +26,11 @@ The assignment requires a nonlinear model of order \(n\geq 3\). Therefore, first
 \dot{\tau}=-\alpha \tau + cu
 \label{eq:actuator_dynamics}
 \end{equation}
-
-\noindent where \(u(t)\) is the actuator command input, \(c\) is the input gain, and \(\alpha>0\) represents the actuator time constant effect. Differentiating \eqref{eq:single_link_second_order} gives:
+where \(u(t)\) is the actuator command input, \(c\) is the input gain, and \(\alpha>0\) represents the actuator time constant effect. Differentiating \eqref{eq:single_link_second_order} gives:
 \begin{equation}
 J y^{(3)} + B\ddot{y}+Mg\ell\cos(y)\dot{y}=\dot{\tau}
 \end{equation}
-
-\noindent Substituting \eqref{eq:actuator_dynamics} and using \eqref{eq:single_link_second_order} gives:
+Substituting \eqref{eq:actuator_dynamics} and using \eqref{eq:single_link_second_order} gives:
 \begin{equation}
 J y^{(3)}
 +
@@ -48,8 +45,7 @@ Mg\ell\cos(y)\dot{y}
 cu
 \label{eq:derived_third_order}
 \end{equation}
-
-\noindent This equation represents a third-order nonlinear robot arm model, where the nonlinearities originate from the gravity term and from the coupling term \(\cos(y)\dot{y}\).
+This equation represents a third-order nonlinear robot arm model, where the nonlinearities originate from the gravity term and from the coupling term \(\cos(y)\dot{y}\).
 
 \subsection{Mathematical Representation}
 
@@ -58,7 +54,6 @@ To match the required structure of the assignment, the robot arm dynamics are re
 y^{(3)}
 +a_1y''
 +a_2y'
-+a_3y
 +b_1(y'')^3
 +b_2(y')^3
 +b_3\sin(y)
@@ -66,8 +61,7 @@ y^{(3)}
 cu .
 \label{eq:control_oriented_model}
 \end{equation}
-
-\noindent This model preserves the physical nonlinearities of the robotic arm while satisfying the general nonlinear system structure required. The nonlinear functions are defined as:
+This model preserves the physical nonlinearities of the robotic arm while satisfying the general nonlinear system structure required. The nonlinear functions are defined as:
 \begin{equation}
 f_1(y'')=(y'')^3,
 \qquad
@@ -75,8 +69,7 @@ f_2(y')=(y')^3,
 \qquad
 f_3(y)=\sin(y).
 \end{equation}
-
-\noindent The term \(b_3\sin(y)\) represents the nonlinear torque acting on the robotic arm, while the cubic terms \(b_1(y'')^3\) and \(b_2(y')^3\) are used to represent nonlinear actuator and friction effects, respectively. The state variables are defined as:
+The term \(b_3\sin(y)\) represents the nonlinear torque acting on the robotic arm, while the cubic terms \(b_1(y'')^3\) and \(b_2(y')^3\) are used to represent nonlinear actuator and friction effects, respectively. The state variables are defined as:
 \begin{equation}
 x_1=y,
 \qquad
@@ -84,8 +77,7 @@ x_2=\dot{y},
 \qquad
 x_3=\ddot{y}.
 \end{equation}
-
-\noindent The state vector is therefore given by:
+The state vector is therefore given by:
 \begin{equation}
 x=
 \begin{bmatrix}
@@ -94,8 +86,7 @@ x_2\\
 x_3
 \end{bmatrix}.
 \end{equation}
-
-\noindent Using these state definitions, the system can be written as:
+Using these state definitions, the system can be written as:
 \begin{align}
 \dot{x}_1 &= x_2,\\
 \dot{x}_2 &= x_3,\\
@@ -113,7 +104,6 @@ where the system output is:
 \begin{equation}
 y=x_1.
 \end{equation}
-
-\noindent The resulting model is a third-order nonlinear single-input single-output (SISO) system that will serve as the basis for following sections.
+The resulting model is a third-order nonlinear single-input single-output (SISO) system that will serve as the basis for following sections.
 
 \bigskip

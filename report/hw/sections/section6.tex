@@ -31,10 +31,10 @@ Since the gain grows like \(1/T_s^{2}\). As
 \(T_s\) grows the loop loses phase margin, and at \(T_s\approx0.06~\mathrm{s}\)
 the closed loop becomes less stable. The forward-Euler integration of the adaptation law adds a smaller error of the same kind.
 
-\subsection{Improved Design - Tustin Discretisation}
+\subsection{Improved Design - Tustin Discretizations}
 
 To recover good performance without reducing \(T_s\), the controller is
-re-discretised using Tustin transform:
+re-discretized using Tustin transform:
 \begin{equation}
 s \;\longleftarrow\; \frac{2}{T_s}\,\frac{z-1}{z+1}
 \label{eq:s6_tustin}
