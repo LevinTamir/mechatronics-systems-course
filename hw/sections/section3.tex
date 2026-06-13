@@ -17,8 +17,7 @@ b_2=0.1,\quad
 b_3=1.5,\quad
 c=1.
 \end{equation}
-
-\noindent The reference model is chosen using a dominant second-order pair with an additional fast real pole:
+The reference model is chosen using a dominant second-order pair with an additional fast real pole:
 \begin{equation}
 \left(s^2+2\zeta\omega_n s+\omega_n^2\right)(s+p_3)
 \end{equation}
@@ -29,35 +28,29 @@ where
 \omega_n=2,\qquad
 p_3=10\zeta\omega_n=14.
 \end{equation}
-
-\noindent Therefore:
+Therefore:
 \begin{equation}
 \left(s^2+2.8s+4\right)(s+14)
 =
 s^3+16.8s^2+43.2s+56.
 \end{equation}
-
-\noindent Thus, the reference model parameters are:
+Thus, the reference model parameters are:
 \begin{equation}
 \alpha_2=16.8,\qquad
 \alpha_1=43.2,\qquad
 \alpha_0=56.
 \end{equation}
-
-\noindent And the reference model polynomial is:
+And the reference model polynomial is:
 \begin{equation}
 s^3+16.8s^2+43.2s+56.
 \end{equation}
-
-\noindent For a third-order polynomial
+For a third-order polynomial
 $s^3+a s^2+b s+c$,
 the Routh--Hurwitz stability conditions are:
 \begin{equation}
 a>0,\qquad b>0,\qquad c>0,\qquad ab>c.
 \end{equation}
-
-\noindent In this case:
-
+In this case:
 \begin{equation}
 16.8>0,\qquad
 43.2>0,\qquad
@@ -74,6 +67,7 @@ and
 \end{equation}
 
 \noindent Therefore, the reference model is stable according to the Routh--Hurwitz criterion.
+\\
 
 \noindent The controller parameters are selected as:
 \begin{equation}
@@ -81,13 +75,11 @@ and
 \lambda_2=4,\qquad
 k_z=5.
 \end{equation}
-
-\noindent The corresponding error-filter polynomial is:
+The corresponding error-filter polynomial is:
 \begin{equation}
 s^2+4s+4=(s+2)^2
 \end{equation}
-
-\noindent which is stable. The reference input is chosen as a constant angular setpoint:
+which is stable. The reference input is chosen as a constant angular setpoint:
 \begin{equation}
 r(t)=\frac{\pi}{4}\;\mathrm{rad}\quad(45^\circ),
 \end{equation}

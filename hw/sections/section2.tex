@@ -30,8 +30,7 @@ y^{(3)}
 =
 cu.
 \end{equation}
-
-\noindent Rearranging gives:
+Rearranging gives:
 \begin{equation}
 y^{(3)}
 =
@@ -56,8 +55,7 @@ and the known regression vector is:
 y'' & y' & y & (y'')^3 & (y')^3 & \sin(y)
 \end{bmatrix}^{T}.
 \end{equation}
-
-\noindent The parameters \(a_i\) and \(b_i\) are assumed to be unknown constants, while the input gain \(c\) is assumed to be known and non-zero.
+The parameters \(a_i\) and \(b_i\) are assumed to be unknown constants, while the input gain \(c\) is assumed to be known and non-zero.
 
 \subsection{Tracking Error and Filtered Error}
 
@@ -65,8 +63,7 @@ The tracking error is defined as:
 \begin{equation}
 e = y-y_m.
 \end{equation}
-
-\noindent Following the adaptive-control design for nonlinear systems of any order, a filtered tracking error is defined. Since the plant is third-order, the filtered error is chosen as:
+Following the adaptive-control design for nonlinear systems of any order, a filtered tracking error is defined. Since the plant is third-order, the filtered error is chosen as:
 \begin{equation}
 z
 =
@@ -83,13 +80,13 @@ $
 s^2+\lambda_2s+\lambda_1
 $
 is selected to be stable.
+\\
 
 \noindent The filtered error \(z\) combines the tracking error, velocity error, and acceleration error into one scalar variable. If \(z(t)\rightarrow0\), then the tracking error follows a stable second-order error equation and \(e(t)\rightarrow0\).
 
 \subsection{Filtered Error Dynamics}
 
 From the definition of \(z\), its derivative is:
-
 \begin{equation}
 \dot{z}
 =
@@ -100,8 +97,7 @@ e^{(3)}
 \lambda_1\dot{e}
 \end{equation}
 
-\noindent Since
-
+since
 \begin{equation}
 e^{(3)}
 =
@@ -111,7 +107,6 @@ y_m^{(3)}
 \end{equation}
 
 we obtain:
-
 \begin{equation}
 \dot{z}
 =
@@ -121,11 +116,9 @@ y_m^{(3)}
 +
 \lambda_2\ddot{e}
 +
-\lambda_1\dot{e}
+\lambda_1\dot{e}.
 \end{equation}
-
-\noindent To simplify the controller design, an auxiliary reference signal is defined as:
-
+To simplify the controller design, an auxiliary reference signal is defined as:
 \begin{equation}
 y_r^{(3)}
 =
@@ -136,9 +129,7 @@ y_m^{(3)}
 \lambda_1\dot{e}
 \label{eq:yr_definition}
 \end{equation}
-
-\noindent Substituting \eqref{eq:yr_definition} into the expression for \(\dot{z}\) gives:
-
+Substituting \eqref{eq:yr_definition} into the expression for \(\dot{z}\) gives:
 \begin{equation}
 \dot{z}
 =
@@ -147,12 +138,11 @@ y^{(3)}
 y_r^{(3)}.
 \label{eq:z_dot_compact}
 \end{equation}
-
-\noindent This representation expresses the filtered error dynamics in terms of the plant output derivative \(y^{(3)}\) and the auxiliary reference signal \(y_r^{(3)}\). The resulting form will be used in the next section to construct the control law and derive the desired closed-loop error dynamics.
+This representation expresses the filtered error dynamics in terms of the plant output derivative \(y^{(3)}\) and the auxiliary reference signal \(y_r^{(3)}\). The resulting form will be used in the next section to construct the control law and derive the desired closed-loop error dynamics.
 
 \subsection{Adaptive Control Law}
 
-\noindent In order to force the filtered error \(z(t)\) to converge to zero, the desired filtered error dynamics are selected as:
+In order to force the filtered error \(z(t)\) to converge to zero, the desired filtered error dynamics are selected as:
 \begin{equation}
 \dot{z}
 =
@@ -161,6 +151,7 @@ y_r^{(3)}.
 \end{equation}
 
 where \(k_z>0\) is a design parameter.
+\\
 
 \noindent Equation \eqref{eq:desired_z_dynamics} is a stable first-order differential equation whose solution is:
 \begin{equation}
@@ -168,8 +159,7 @@ z(t)
 =
 z(0)e^{-k_z t}
 \end{equation}
-
-\noindent Therefore, the filtered error converges exponentially to zero. The control law will now be designed such that the closed-loop system follows the desired dynamics \eqref{eq:desired_z_dynamics}.
+Therefore, the filtered error converges exponentially to zero. The control law will now be designed such that the closed-loop system follows the desired dynamics \eqref{eq:desired_z_dynamics}.
 \noindent First, we assume that the parameter vector \(\theta\) is known. In this case, the control input is chosen as:
 \begin{equation}
 u
@@ -184,8 +174,7 @@ k_z z
 \right]
 \label{eq:nominal_control_law}
 \end{equation}
-
-\noindent Substituting \eqref{eq:nominal_control_law} into the plant model \eqref{eq:plant_parametric} gives:
+Substituting \eqref{eq:nominal_control_law} into the plant model \eqref{eq:plant_parametric} gives:
 \begin{align}
 y^{(3)}
 &=
@@ -215,9 +204,7 @@ y_r^{(3)}
 -
 k_z z
 \end{align}
-
-\noindent In this case, we can see that the filtered error dynamics become identical to \eqref{eq:z_dot_compact} as we assumed:
-
+In this case, we can see that the filtered error dynamics become identical to \eqref{eq:z_dot_compact} as we assumed:
 \begin{equation}
 y^{(3)} - y_r^{(3)}
 =
@@ -225,12 +212,11 @@ y^{(3)} - y_r^{(3)}
 =
 -k_z z.
 \end{equation}
-
-\noindent Therefore, the closed-loop system achieves the desired filtered error dynamics and the filtered error converges exponentially to zero.
+Therefore, the closed-loop system achieves the desired filtered error dynamics and the filtered error converges exponentially to zero.
 
 \subsubsection*{Adaptive Controller}
 
-\noindent In practice, the parameters \(a_i\) and \(b_i\) are unknown. Therefore, the true parameter vector \(\theta\) cannot be used directly and must be replaced by its estimate \(\hat{\theta}\). Using the definition of \(y_r^{(3)}\) from \eqref{eq:yr_definition}, the controller can also be written as:
+In practice, the parameters \(a_i\) and \(b_i\) are unknown. Therefore, the true parameter vector \(\theta\) cannot be used directly and must be replaced by its estimate \(\hat{\theta}\). Using the definition of \(y_r^{(3)}\) from \eqref{eq:yr_definition}, the controller can also be written as:
 \begin{equation}
 u
 =
@@ -247,8 +233,7 @@ y_m^{(3)}
 k_z z
 \right].
 \end{equation}
-
-\noindent We define the parameter estimation error as:
+We define the parameter estimation error as:
 \begin{equation}
 \tilde{\theta}
 =
@@ -256,8 +241,7 @@ k_z z
 -
 \theta.
 \end{equation}
-
-\noindent Substituting \eqref{eq:nominal_control_law} into the plant model \eqref{eq:plant_parametric} yields:
+Substituting \eqref{eq:nominal_control_law} into the plant model \eqref{eq:plant_parametric} yields:
 \begin{align}
 y^{(3)}
 &=
@@ -276,8 +260,7 @@ k_z z
 \tilde{\theta}^{T}\phi.
 \label{eq:adaptive_control_law}
 \end{align}
-
-\noindent Using \eqref{eq:z_dot_compact}, the filtered error dynamics become:
+Using \eqref{eq:z_dot_compact}, the filtered error dynamics become:
 \begin{equation}
 y^{(3)} - y_r^{(3)}
 =
@@ -288,8 +271,7 @@ y^{(3)} - y_r^{(3)}
 \tilde{\theta}^{T}\phi.
 \label{eq:z_dynamics}
 \end{equation}
-
-\noindent Compared to the nominal case, an additional term \(\tilde{\theta}^{T}\phi\) appears due to parameter uncertainty. The purpose of the adaptation law is to update \(\hat{\theta}\) online and compensate for this uncertainty while preserving the desired stability properties.
+Compared to the nominal case, an additional term \(\tilde{\theta}^{T}\phi\) appears due to parameter uncertainty. The purpose of the adaptation law is to update \(\hat{\theta}\) online and compensate for this uncertainty while preserving the desired stability properties.
 
 \subsection{Adaptation Law}
 
@@ -317,8 +299,7 @@ V
 \frac{1}{2}\tilde{\theta}^{T}\Gamma^{-1}\tilde{\theta}.
 \label{eq:lyapunov_candidate}
 \end{equation}
-
-\noindent The first term represents the filtered tracking error energy, and the second term represents the parameter estimation error energy. Since \(\Gamma>0\), the function \(V\) is positive definite with respect to \(z\) and \(\tilde{\theta}\). Differentiating \eqref{eq:lyapunov_candidate} gives:
+The first term represents the filtered tracking error energy, and the second term represents the parameter estimation error energy. Since \(\Gamma>0\), the function \(V\) is positive definite with respect to \(z\) and \(\tilde{\theta}\). Differentiating \eqref{eq:lyapunov_candidate} gives:
 \begin{equation}
 \dot{V}
 =
@@ -326,15 +307,13 @@ z\dot{z}
 +
 \tilde{\theta}^{T}\Gamma^{-1}\dot{\tilde{\theta}}.
 \end{equation}
-
-\noindent Since the real parameters are constant:
+Since the real parameters are constant:
 \begin{equation}
 \dot{\tilde{\theta}}
 =
 \dot{\hat{\theta}}.
 \end{equation}
-
-\noindent Substituting \eqref{eq:z_dynamics} and \eqref{eq:adaptation_law} gives:
+Substituting \eqref{eq:z_dynamics} and \eqref{eq:adaptation_law} gives:
 \begin{align}
 \dot{V}
 &=
@@ -356,8 +335,7 @@ z\tilde{\theta}^{T}\phi
 -
 \tilde{\theta}^{T}\phi z.
 \end{align}
-
-\noindent The last two terms are equal scalars with opposite signs, and therefore they cancel:
+The last two terms are equal scalars with opposite signs, and therefore they cancel:
 \begin{equation}
 \dot{V}
 =
@@ -370,16 +348,14 @@ z\tilde{\theta}^{T}\phi
 -k_z z^2.
 \label{eq:lyapunov_derivative}
 \end{equation}
-
-\noindent Since \(k_z>0\), we obtain:
+ Since \(k_z>0\), we obtain:
 \begin{equation}
 \dot{V}
 =
 -k_z z^2
 \leq 0.
 \end{equation}
-
-\noindent Therefore, the Lyapunov function never increases with time. This implies that \(z(t)\) and \(\tilde{\theta}(t)\) remain bounded. Furthermore, the filtered error \(z(t)\) converges to zero:
+Therefore, the Lyapunov function never increases with time. This implies that \(z(t)\) and \(\tilde{\theta}(t)\) remain bounded. Furthermore, the filtered error \(z(t)\) converges to zero:
 \begin{equation}
 z(t)\rightarrow0
 \qquad
@@ -387,8 +363,7 @@ z(t)\rightarrow0
 \qquad
 t\rightarrow\infty.
 \end{equation}
-
-\noindent From the definition of \(z\):
+ From the definition of \(z\):
 \begin{equation}
 z
 =
@@ -398,8 +373,7 @@ z
 +
 \lambda_1e.
 \end{equation}
-
-\noindent When \(z(t)\rightarrow0\), the tracking error satisfies:
+When \(z(t)\rightarrow0\), the tracking error satisfies:
 \begin{equation}
 \ddot{e}
 +
@@ -409,19 +383,16 @@ z
 =
 0.
 \end{equation}
-
-\noindent Since \(\lambda_1,\lambda_2>0\) are chosen to give stable error dynamics, it follows that:
+ Since \(\lambda_1,\lambda_2>0\) are chosen to give stable error dynamics, it follows that:
 \begin{equation}
 e(t)\rightarrow0,
 \qquad
 \dot{e}(t)\rightarrow0.
 \end{equation}
-
-\noindent Finally, since \(e=y-y_m\), convergence of the tracking error implies:
+Finally, since \(e=y-y_m\), convergence of the tracking error implies:
 \begin{equation}
 y(t)\rightarrow y_m(t).
 \end{equation}
-
-\noindent Thus, the proposed adaptive controller guarantees bounded closed-loop signals and asymptotic tracking of the reference model output. $\blacksquare$
+Thus, the proposed adaptive controller guarantees bounded closed-loop signals and asymptotic tracking of the reference model output. $\blacksquare$
 
 \bigskip
