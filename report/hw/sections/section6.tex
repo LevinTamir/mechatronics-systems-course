@@ -15,7 +15,7 @@ improved discrete-time design based on the bilinear (Tustin) transform.
 The Section~5 controller was simulated for several sampling periods, keeping the
 continuous-time plant, the reference model and all controller gains the same.
 Figure~\ref{fig:s6_degradation} shows the tracking error \(e(t)\) and the
-filtered error \(z(t)\) for \(T_s = 0.01,\,0.04,\,0.05~\mathrm{s}\). The peak
+filtered error \(z(t)\) for \(T_s\) from \(0.01\) to \(0.05~\mathrm{s}\). The peak
 tracking error grows as \(T_s\) increases, and the filtered error \(z(t)\) shows
 a larger spike at start-up.
 
@@ -116,22 +116,9 @@ the baseline diverges, so the microcontroller can run at a lower sampling rate.
 \centering
 \includegraphics[width=0.7\textwidth]{figs/hw/section6_tustin_fix.png}
 \caption{Closed loop at \(T_s=0.05~\mathrm{s}\): output tracking (top) and
-tracking error (bottom), for the baseline and the Tustin redesign.}
+tracking error (bottom), for the baseline and the Tustin redesign. The inset
+zooms into the transient, where the two outputs differ most.}
 \label{fig:s6_fix}
-\end{figure}
-
-\noindent Figure~\ref{fig:s6_params} shows that the parameter estimates of the
-redesigned controller at \(T_s=0.06~\mathrm{s}\) -- where the baseline cannot run
--- stay bounded and follow the same trajectories as the well-sampled reference
-(\(T_s=0.01~\mathrm{s}\)). As in Sections~4 and~5 they do not converge to the
-true values, because the step reference is not persistently exciting.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.7\textwidth]{figs/hw/section6_parameter_comparison.png}
-\caption{Parameter estimates \(\hat{\theta}_i(t)\): well-sampled baseline
-(\(T_s=0.01~\mathrm{s}\)) and the Tustin redesign at \(T_s=0.06~\mathrm{s}\).}
-\label{fig:s6_params}
 \end{figure}
 
 \noindent The only downside of the redesign is a slightly larger error at very

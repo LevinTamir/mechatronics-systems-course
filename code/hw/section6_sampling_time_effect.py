@@ -179,14 +179,12 @@ def run_discrete_sim(Ts, method="baseline", tau=TAU, t_end=15.0,
 # ==================================================
 # Run the simulations
 # ==================================================
-TS_FIX = 0.06    # sampling time where the baseline diverges (Tustin still stable)
-TS_CMP = 0.05    # largest Ts where BOTH controllers are stable -- fair comparison
+TS_CMP = 0.05    # largest Ts where both controllers are stable -- fair comparison
 
-baseline_ref = run_discrete_sim(0.01, "baseline")      # well-sampled reference
-deg = {Ts: run_discrete_sim(Ts, "baseline") for Ts in (0.01, 0.04, 0.05)}
+deg = {Ts: run_discrete_sim(Ts, "baseline")
+       for Ts in (0.01, 0.02, 0.03, 0.04, 0.05)}
 base_cmp = run_discrete_sim(TS_CMP, "baseline")
 tust_cmp = run_discrete_sim(TS_CMP, "tustin")
-tust_fix = run_discrete_sim(TS_FIX, "tustin")          # stable where the baseline diverges
 
 print("Performance vs sampling time  (max|e| for t>1s, '*'=diverged)")
 print(f"{'Ts':>6} | {'baseline':>20} | {'Tustin':>20}")
@@ -212,7 +210,7 @@ ensure_output_dir(output_dir)
 
 # -------- Fig 1: graceful degradation of the baseline controller --------
 fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
-for Ts in (0.01, 0.04, 0.05):
+for Ts in (0.01, 0.02, 0.03, 0.04, 0.05):
     r = deg[Ts]
     axes[0].plot(r["t"], r["e"], label=f"$T_s={Ts:.2f}$ s")
     axes[1].plot(r["t"], r["z"], label=f"$T_s={Ts:.2f}$ s")
@@ -226,39 +224,41 @@ fig.tight_layout()
 fig.savefig(os.path.join(output_dir, "section6_degradation.png"), dpi=300)
 
 
-# -------- Fig 2: Tustin redesign reduces overshoot/error at a degraded Ts --------
+# -------- Fig 2: Tustin vs baseline at Ts=0.05, with a zoom on the transient --------
 fig, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True)
 axes[0].plot(tust_cmp["t"], tust_cmp["ym"], ":", color="gray", label=r"$y_m(t)$")
 axes[0].plot(base_cmp["t"], base_cmp["y"], color="C0", label="baseline")
 axes[0].plot(tust_cmp["t"], tust_cmp["y"], color="C1", label="Tustin redesign")
 axes[0].set_ylabel("Output [rad]")
 axes[0].set_title(fr"Baseline vs. Tustin redesign at $T_s={TS_CMP:.2f}$ s")
+axes[0].grid(True)
+axes[0].legend(loc="upper left")
+
+# zoom inset on the part of the response where the two outputs differ most
+dy = np.abs(base_cmp["y"] - tust_cmp["y"])
+tp = base_cmp["t"][int(np.argmax(dy))]
+x0, x1 = max(0.0, tp - 0.7), tp + 1.8
+mask = (base_cmp["t"] >= x0) & (base_cmp["t"] <= x1)
+ys = np.concatenate([base_cmp["y"][mask], tust_cmp["y"][mask], tust_cmp["ym"][mask]])
+pad = 0.05 * (ys.max() - ys.min())
+axins = axes[0].inset_axes([0.50, 0.08, 0.46, 0.5])
+axins.plot(tust_cmp["t"], tust_cmp["ym"], ":", color="gray")
+axins.plot(base_cmp["t"], base_cmp["y"], color="C0")
+axins.plot(tust_cmp["t"], tust_cmp["y"], color="C1")
+axins.set_xlim(x0, x1)
+axins.set_ylim(ys.min() - pad, ys.max() + pad)
+axins.grid(True, alpha=0.4)
+axins.tick_params(labelsize=7)
+axes[0].indicate_inset_zoom(axins, edgecolor="black")
+
 axes[1].plot(base_cmp["t"], base_cmp["e"], color="C0", label="baseline")
 axes[1].plot(tust_cmp["t"], tust_cmp["e"], color="C1", label="Tustin redesign")
 axes[1].set_xlabel("Time [s]")
 axes[1].set_ylabel(r"$e(t)$ [rad]")
-for ax in axes:
-    ax.grid(True); ax.legend()
+axes[1].grid(True)
+axes[1].legend()
 fig.tight_layout()
 fig.savefig(os.path.join(output_dir, "section6_tustin_fix.png"), dpi=300)
 
-
-# -------- Fig 3: parameter estimates remain well-behaved --------
-param_labels = [r"$\hat{a}_1$", r"$\hat{a}_2$", r"$\hat{a}_3$",
-                r"$\hat{b}_1$", r"$\hat{b}_2$", r"$\hat{b}_3$"]
-fig, axes = plt.subplots(6, 1, figsize=(8, 11), sharex=True)
-for i in range(6):
-    axes[i].plot(baseline_ref["t"], baseline_ref["theta"][i], color="C0",
-                 label=r"baseline $T_s=0.01$ s" if i == 0 else None)
-    axes[i].plot(tust_fix["t"], tust_fix["theta"][i], color="C1",
-                 label=fr"Tustin $T_s={TS_FIX:.2f}$ s" if i == 0 else None)
-    axes[i].axhline(theta_true[i], color="gray", linestyle=":", linewidth=1,
-                    label="true value" if i == 0 else None)
-    axes[i].set_ylabel(param_labels[i]); axes[i].grid(True)
-axes[0].legend(loc="best", fontsize=8)
-axes[0].set_title("Parameter estimates: baseline vs. Tustin redesign")
-axes[-1].set_xlabel("Time [s]")
-fig.tight_layout()
-fig.savefig(os.path.join(output_dir, "section6_parameter_comparison.png"), dpi=300)
 
 plt.show()
