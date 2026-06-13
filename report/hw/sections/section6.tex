@@ -1,28 +1,22 @@
 % ==================================================
 % Section 6
 % ==================================================
-\section{Sampling-Time Effect and a Bilinear (Tustin) Redesign}
+\section{Sampling-Time Effect and Tustin Redesign}
 
 The discrete-time controller of Section~5 used the simplest approximations: the
 error derivatives were computed with backward differences and the adaptation law
-was integrated with forward Euler. These are only accurate when the sampling
-period \(T_s\) is small. In this section we first show how the closed-loop
-performance gets worse as \(T_s\) grows, explain why, and then present an
-improved discrete-time design based on the bilinear (Tustin) transform.
+was integrated with forward Euler.
 
 \subsection{Performance Degradation with Increasing Sampling Time}
 
-The Section~5 controller was simulated for several sampling periods, keeping the
-continuous-time plant, the reference model and all controller gains the same.
 Figure~\ref{fig:s6_degradation} shows the tracking error \(e(t)\) and the
-filtered error \(z(t)\) for \(T_s\) from \(0.01\) to \(0.05~\mathrm{s}\). The peak
-tracking error grows as \(T_s\) increases, and the filtered error \(z(t)\) shows
-a larger spike at start-up.
+filtered error \(z(t)\) for \(T_s\) from \(0.01\) to \(0.05~\mathrm{s}\). As seen below, the peak
+tracking error grows as \(T_s\) increases.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{figs/hw/section6_degradation.png}
-\caption{Baseline (Section~5) controller: tracking error \(e(t)\) (top) and
+\caption{Tracking error \(e(t)\) (top) and
 filtered error \(z(t)\) (bottom) for increasing sampling periods.}
 \label{fig:s6_degradation}
 \end{figure}
