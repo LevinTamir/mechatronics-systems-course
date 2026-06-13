@@ -24,6 +24,7 @@ env/
 .ipynb_checkpoints/
 
 # ---- LaTeX build artifacts ----
+*.pdf
 *.aux
 *.lof
 *.log
@@ -50,5 +51,6 @@ env/
 # ---- OS / Editor ----
 .DS_Store
 Thumbs.db
+desktop.ini
 .vscode/
 .idea/
