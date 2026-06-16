@@ -16,6 +16,38 @@ y_m^{(3)}
 
 where \(r(t)\) is the reference input and the constants \(\alpha_0,\alpha_1,\alpha_2>0\) are chosen such that the reference model is stable.
 
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[>={Stealth[length=2.5mm]},
+      block/.style={draw,thick,rounded corners=2pt,minimum height=1.1cm,minimum width=2.3cm,align=center,fill=blue!4},
+      sumc/.style={draw,thick,circle,minimum size=7mm,inner sep=0pt},
+      every node/.style={font=\small}]
+    \node[block] (ref)   at (3.4,2.0) {Reference\\Model};
+    \node[block] (ctrl)  at (3.4,0)   {Adaptive\\Controller};
+    \node[block] (plant) at (7.6,0)   {Plant};
+    \node[sumc]  (sum)   at (10.4,1.0){};
+    \node[block] (adapt) at (6.2,-2.3){Adaptation Law\\$\dot{\hat\theta}=-\Gamma\varphi z$};
+    \node at ($(sum)+(-0.46,0.24)$){\scriptsize$-$};
+    \node at ($(sum)+(-0.26,-0.42)$){\scriptsize$+$};
+    \coordinate (rin) at (0.5,0);
+    \coordinate (rsp) at (1.7,0);
+    \draw[->] (rin) -- node[above,pos=0.3]{$r(t)$} (ctrl.west);
+    \fill (rsp) circle(1.6pt);
+    \draw[->] (rsp) |- (ref.west);
+    \draw[->] (ref.east) -| node[above,pos=0.25]{$y_m$} ($(sum)+(0,0.35)$);
+    \draw[->] (ctrl.east) -- node[above]{$u$} (plant.west);
+    \coordinate (ysp) at (9.2,0);
+    \draw[->] (plant.east) -- node[above,pos=0.45]{$y$} (9.2,0) |- ($(sum)+(0,-0.35)$);
+    \fill (11.1,1.0) circle(1.6pt);
+    \draw[->] (sum.east) -- node[above]{$e$} (11.7,1.0);
+    \draw[->] (11.1,1.0) |- (adapt.east);
+    \draw[->,dashed] (adapt.north) -- (6.2,-1.0) -| node[right,pos=0.85]{$\hat\theta$} (ctrl.south);
+    \end{tikzpicture}
+    \caption{Model-reference adaptive control architecture. The reference model defines the desired response $y_m(t)$; the adaptive controller drives $y(t)\to y_m(t)$; the adaptation law tunes $\hat\theta$ online from the filtered error.}
+    \label{fig:mrac_block}
+    \end{figure}
+
 \subsection{System Parametrization}
 
 The plant model is:
@@ -348,31 +380,37 @@ The last two terms are equal scalars with opposite signs, and therefore they can
 -k_z z^2.
 \label{eq:lyapunov_derivative}
 \end{equation}
- Since \(k_z>0\), we obtain:
+Since $k_z>0$, $\dot V=-k_z z^2\le 0$, so $V$ is non-increasing. As $V\ge 0$ is
+bounded below, $V(t)$ converges to a finite limit; consequently $z$ and
+$\tilde\theta$ are bounded, i.e. $z,\tilde\theta\in\mathcal{L}_\infty$.
+
+Boundedness alone does \emph{not} imply $z\to 0$, because $\dot V$ is only
+negative \emph{semi}definite (it does not involve $\tilde\theta$). Convergence is
+therefore established with Barbalat's lemma.
+
+\paragraph{Step 1: $z\in\mathcal{L}_2$.} Integrating $\dot V=-k_z z^2$,
 \begin{equation}
-\dot{V}
-=
--k_z z^2
-\leq 0.
+k_z\int_0^\infty z^2(\tau)\,d\tau = V(0)-V(\infty)<\infty
+\quad\Longrightarrow\quad z\in\mathcal{L}_2 .
 \end{equation}
-Therefore, the Lyapunov function never increases with time. This implies that \(z(t)\) and \(\tilde{\theta}(t)\) remain bounded. Furthermore, the filtered error \(z(t)\) converges to zero:
+
+\paragraph{Step 2: all signals bounded.} The reference model \eqref{eq:reference_model}
+is Hurwitz and driven by the bounded input $r(t)$, so $y_m,\dot y_m,\ddot y_m$ are
+bounded. Because $s^2+\lambda_2 s+\lambda_1$ is Hurwitz and
+$z=\ddot e+\lambda_2\dot e+\lambda_1 e$ is bounded, the error and its derivatives
+$e,\dot e,\ddot e$ are bounded; hence $y=e+y_m$, $\dot y$, $\ddot y$ are bounded,
+and so is the regressor $\varphi=[\ddot y,\ \dot y,\ y,\ \ddot y^{3},\ \dot y^{3},\ \sin y]^{T}$.
+
+\paragraph{Step 3: $\dot z$ bounded.} From \eqref{eq:z_dynamics},
+$\dot z=-k_z z+\tilde\theta^{T}\varphi$. With $z,\tilde\theta,\varphi$ all bounded,
+$\dot z\in\mathcal{L}_\infty$, so $z$ is uniformly continuous.
+
+\paragraph{Conclusion.} Since $z\in\mathcal{L}_2\cap\mathcal{L}_\infty$ and
+$\dot z\in\mathcal{L}_\infty$, Barbalat's lemma yields
 \begin{equation}
-z(t)\rightarrow0
-\qquad
-\text{as}
-\qquad
-t\rightarrow\infty.
+z(t)\to 0 \qquad\text{as } t\to\infty .
 \end{equation}
- From the definition of \(z\):
-\begin{equation}
-z
-=
-\ddot{e}
-+
-\lambda_2\dot{e}
-+
-\lambda_1e.
-\end{equation}
+
 When \(z(t)\rightarrow0\), the tracking error satisfies:
 \begin{equation}
 \ddot{e}
