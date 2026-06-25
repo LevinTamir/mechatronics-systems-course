@@ -47,7 +47,7 @@ improve robustness, the error derivatives are obtained using a first-order
 filtered derivative instead. Applying the Tustin transformation to the filter gives:
 \begin{equation}
 \dot{\hat{e}}[k]=
-\frac{a\big(e[k]-e[k-1]\big)-(1-\tau a),\dot{\hat{e}}[k-1]}{\tau a+1},
+\frac{a\big(e[k]-e[k-1]\big)-(1-\tau a)\,\dot{\hat{e}}[k-1]}{\tau a+1},
 \qquad
 a=\frac{2}{T_s}
 \label{eq:s6_dirty}
@@ -58,7 +58,7 @@ reduces the sensitivity of the controller to large sampling times.
 The adaptation law is also discretized using the Tustin method instead of the Forward Euler approximation. The resulting update equation is:
 \begin{equation}
 \hat{\theta}[k]=\hat{\theta}[k-1]
--\frac{T_s}{2},\Gamma\big(\varphi[k]z[k]+\varphi[k-1]z[k-1]\big)
+-\frac{T_s}{2}\,\Gamma\big(\varphi[k]z[k]+\varphi[k-1]z[k-1]\big)
 \label{eq:s6_trap}
 \end{equation}
 which uses information from both the current and previous samples. Compared to
