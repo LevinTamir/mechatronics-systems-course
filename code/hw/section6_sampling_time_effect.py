@@ -1,22 +1,6 @@
-"""
-Section 6 -- Sampling-time effect and a Tustin (bilinear) redesign.
-
-The Section 5 discrete controller estimates the error derivatives with raw
-backward differences and integrates the adaptation law with forward Euler.
-Both approximations lose accuracy as the sampling period Ts grows, and the
-high-frequency gain of the second backward difference (~1/Ts^2), together with
-the zero-order-hold delay, eventually destabilises the closed loop.
-
-The improved design discretises the controller with the bilinear (Tustin)
-transform:
-  * the error derivatives are obtained from a "dirty derivative"
-    H(s) = s/(tau*s + 1) realised with the bilinear transform, and
-  * the adaptation law is integrated with the trapezoidal (Tustin) rule.
-
-This better approximates the continuous-time controller, reduces the tracking
-error at a given Ts, and extends the sampling period for which the closed loop
-remains stable.
-"""
+# --------------------
+# Section 6
+# --------------------
 
 import os
 import numpy as np

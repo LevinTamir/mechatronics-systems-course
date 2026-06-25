@@ -1,5 +1,8 @@
-import os
+# --------------------
+# Section 4
+# --------------------
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
