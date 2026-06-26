@@ -19,31 +19,7 @@ where \(r(t)\) is the reference input and the constants \(\alpha_0,\alpha_1,\alp
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[>={Stealth[length=2.5mm]},
-      block/.style={draw,thick,rounded corners=2pt,minimum height=1.1cm,minimum width=2.3cm,align=center,fill=blue!4},
-      sumc/.style={draw,thick,circle,minimum size=7mm,inner sep=0pt},
-      every node/.style={font=\small}]
-    \node[block] (ref)   at (3.4,2.0) {Reference\\Model};
-    \node[block] (ctrl)  at (3.4,0)   {Adaptive\\Controller};
-    \node[block] (plant) at (7.6,0)   {Plant};
-    \node[sumc]  (sum)   at (10.4,1.0){};
-    \node[block] (adapt) at (6.2,-2.3){Adaptation Law\\$\dot{\hat\theta}=-\Gamma\varphi z$};
-    \node at ($(sum)+(-0.46,0.24)$){\scriptsize$-$};
-    \node at ($(sum)+(-0.26,-0.42)$){\scriptsize$+$};
-    \coordinate (rin) at (0.5,0);
-    \coordinate (rsp) at (1.7,0);
-    \draw[->] (rin) -- node[above,pos=0.3]{$r(t)$} (ctrl.west);
-    \fill (rsp) circle(1.6pt);
-    \draw[->] (rsp) |- (ref.west);
-    \draw[->] (ref.east) -| node[above,pos=0.25]{$y_m$} ($(sum)+(0,0.35)$);
-    \draw[->] (ctrl.east) -- node[above]{$u$} (plant.west);
-    \coordinate (ysp) at (9.2,0);
-    \draw[->] (plant.east) -- node[above,pos=0.45]{$y$} (9.2,0) |- ($(sum)+(0,-0.35)$);
-    \fill (11.1,1.0) circle(1.6pt);
-    \draw[->] (sum.east) -- node[above]{$e$} (11.7,1.0);
-    \draw[->] (11.1,1.0) |- (adapt.east);
-    \draw[->,dashed] (adapt.north) -- (6.2,-1.0) -| node[right,pos=0.85]{$\hat\theta$} (ctrl.south);
-    \end{tikzpicture}
+    \includegraphics[width=0.9\textwidth]{figs/hw/MRAC_diagram.png}
     \caption{Model-reference adaptive control architecture. The reference model defines the desired response $y_m(t)$; the adaptive controller drives $y(t)\to y_m(t)$; the adaptation law tunes $\hat\theta$ online from the filtered error.}
     \label{fig:mrac_block}
     \end{figure}
