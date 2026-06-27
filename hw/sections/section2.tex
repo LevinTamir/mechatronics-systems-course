@@ -20,7 +20,7 @@ where \(r(t)\) is the reference input and the constants \(\alpha_0,\alpha_1,\alp
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/hw/MRAC_diagram.png}
-    \caption{Model-reference adaptive control architecture. The reference model defines the desired response $y_m(t)$; the adaptive controller drives $y(t)\to y_m(t)$; the adaptation law tunes $\hat\theta$ online from the filtered error.}
+    \caption{Model-reference adaptive control architecture.}
     \label{fig:mrac_block}
     \end{figure}
 
@@ -44,7 +44,7 @@ y^{(3)}
 =
 -\theta^T\phi
 +
-cu,
+cu
 \label{eq:plant_parametric}
 \end{equation}
 
@@ -53,7 +53,7 @@ where the unknown parameter vector is:
 \theta =
 \begin{bmatrix}
 a_1 & a_2 & a_3 & b_1 & b_2 & b_3
-\end{bmatrix}^{T},
+\end{bmatrix}^{T}
 \end{equation}
 
 and the known regression vector is:
@@ -71,7 +71,7 @@ The tracking error is defined as:
 \begin{equation}
 e = y-y_m.
 \end{equation}
-Following the adaptive-control design for nonlinear systems of any order, a filtered tracking error is defined. Since the plant is third-order, the filtered error is chosen as:
+Following the adaptive-control design for nonlinear systems, a filtered tracking error is defined. Since the plant is third-order, the filtered error is chosen as:
 \begin{equation}
 z
 =
@@ -79,7 +79,7 @@ z
 +
 \lambda_2\dot{e}
 +
-\lambda_1 e
+\lambda_1 e.
 \label{eq:filtered_error}
 \end{equation}
 
@@ -125,8 +125,9 @@ y_m^{(3)}
 \lambda_2\ddot{e}
 +
 \lambda_1\dot{e}.
+\label{eq:zdot_definition}
 \end{equation}
-To simplify the controller design, an auxiliary reference signal is defined as:
+To simplify the controller design, we first define the following auxiliary signal:
 \begin{equation}
 y_r^{(3)}
 =
@@ -137,7 +138,7 @@ y_m^{(3)}
 \lambda_1\dot{e}
 \label{eq:yr_definition}
 \end{equation}
-Substituting \eqref{eq:yr_definition} into the expression for \(\dot{z}\) gives:
+Substituting \eqref{eq:yr_definition} into \eqref{eq:zdot_definition} gives:
 \begin{equation}
 \dot{z}
 =
@@ -212,7 +213,7 @@ y_r^{(3)}
 -
 k_z z
 \end{align}
-In this case, we can see that the filtered error dynamics become identical to \eqref{eq:z_dot_compact} as we assumed:
+Using \eqref{eq:z_dot_compact}, the filtered error dynamics become:
 \begin{equation}
 y^{(3)} - y_r^{(3)}
 =
@@ -224,7 +225,21 @@ Therefore, the closed-loop system achieves the desired filtered error dynamics a
 
 \subsubsection*{Adaptive Controller}
 
-In practice, the parameters \(a_i\) and \(b_i\) are unknown. Therefore, the true parameter vector \(\theta\) cannot be used directly and must be replaced by its estimate \(\hat{\theta}\). Using the definition of \(y_r^{(3)}\) from \eqref{eq:yr_definition}, the controller can also be written as:
+In practice, the parameters \(a_i\) and \(b_i\) are unknown. Therefore, the true parameter vector \(\theta\) cannot be used directly and is replaced by its estimate \(\hat{\theta}\). The adaptive control law is chosen as:
+\begin{equation}
+u
+=
+\frac{1}{c}
+\left[
+\hat{\theta}^{T}\phi
++
+y_r^{(3)}
+-
+k_z z
+\right].
+\label{eq:adaptive_control_law}
+\end{equation}
+Using the definition of \(y_r^{(3)}\) from \eqref{eq:yr_definition}, the controller can also be written as:
 \begin{equation}
 u
 =
@@ -249,7 +264,7 @@ We define the parameter estimation error as:
 -
 \theta.
 \end{equation}
-Substituting \eqref{eq:nominal_control_law} into the plant model \eqref{eq:plant_parametric} yields:
+Substituting \eqref{eq:adaptive_control_law} into the plant model \eqref{eq:plant_parametric} gives:
 \begin{align}
 y^{(3)}
 &=
@@ -266,12 +281,9 @@ y_r^{(3)}
 k_z z
 +
 \tilde{\theta}^{T}\phi.
-\label{eq:adaptive_control_law}
 \end{align}
 Using \eqref{eq:z_dot_compact}, the filtered error dynamics become:
 \begin{equation}
-y^{(3)} - y_r^{(3)}
-=
 \dot{z}
 =
 -k_z z
@@ -283,7 +295,7 @@ Compared to the nominal case, an additional term \(\tilde{\theta}^{T}\phi\) appe
 
 \subsection{Adaptation Law}
 
-The parameter estimates are updated online using the adaptation law:
+The parameter estimates are updated online according to the following adaptation law:
 \begin{equation}
 \dot{\hat{\theta}}
 =
@@ -307,7 +319,7 @@ V
 \frac{1}{2}\tilde{\theta}^{T}\Gamma^{-1}\tilde{\theta}.
 \label{eq:lyapunov_candidate}
 \end{equation}
-The first term represents the filtered tracking error energy, and the second term represents the parameter estimation error energy. Since \(\Gamma>0\), the function \(V\) is positive definite with respect to \(z\) and \(\tilde{\theta}\). Differentiating \eqref{eq:lyapunov_candidate} gives:
+The first term measures the filtered tracking error, while the second term measures the parameter estimation error. Since \(\Gamma>0\), the function \(V\) is positive definite with respect to \(z\) and \(\tilde{\theta}\). Differentiating \eqref{eq:lyapunov_candidate} gives:
 \begin{equation}
 \dot{V}
 =
@@ -356,38 +368,49 @@ The last two terms are equal scalars with opposite signs, and therefore they can
 -k_z z^2.
 \label{eq:lyapunov_derivative}
 \end{equation}
-Since $k_z>0$, $\dot V=-k_z z^2\le 0$, so $V$ is non-increasing. As $V\ge 0$ is
-bounded below, $V(t)$ converges to a finite limit; consequently $z$ and
-$\tilde\theta$ are bounded, i.e. $z,\tilde\theta\in\mathcal{L}_\infty$.
+Since \(k_z>0\), it follows that:
+\[
+\dot{V}
+=
+-k_zz^2
+\le0.
+\]
+Therefore, the Lyapunov function never increases with time, which implies that both the filtered error \(z\) and the parameter estimation error \(\tilde{\theta}\) remain bounded. However, since \(\dot{V}\) is only negative semidefinite, this result alone does not prove that \(z(t) \rightarrow 0\). To show that the filtered error converges to zero, Barbalat's lemma is used.
 
-Boundedness alone does \emph{not} imply $z\to 0$, because $\dot V$ is only
-negative \emph{semi}definite (it does not involve $\tilde\theta$). Convergence is
-therefore established with Barbalat's lemma.
+\paragraph{Step 1: Showing that \(z\in\mathcal{L}_2\).}
 
-\paragraph{Step 1: $z\in\mathcal{L}_2$.} Integrating $\dot V=-k_z z^2$,
+Integrating \eqref{eq:lyapunov_derivative} from \(0\) to \(\infty\) gives:
 \begin{equation}
 k_z\int_0^\infty z^2(\tau)\,d\tau = V(0)-V(\infty)<\infty
 \quad\Longrightarrow\quad z\in\mathcal{L}_2 .
 \end{equation}
 
-\paragraph{Step 2: all signals bounded.} The reference model \eqref{eq:reference_model}
-is Hurwitz and driven by the bounded input $r(t)$, so $y_m,\dot y_m,\ddot y_m$ are
-bounded. Because $s^2+\lambda_2 s+\lambda_1$ is Hurwitz and
-$z=\ddot e+\lambda_2\dot e+\lambda_1 e$ is bounded, the error and its derivatives
-$e,\dot e,\ddot e$ are bounded; hence $y=e+y_m$, $\dot y$, $\ddot y$ are bounded,
-and so is the regressor $\varphi=[\ddot y,\ \dot y,\ y,\ \ddot y^{3},\ \dot y^{3},\ \sin y]^{T}$.
+\paragraph{Step 2: Showing that \(\dot{z}\) is bounded.}
 
-\paragraph{Step 3: $\dot z$ bounded.} From \eqref{eq:z_dynamics},
-$\dot z=-k_z z+\tilde\theta^{T}\varphi$. With $z,\tilde\theta,\varphi$ all bounded,
-$\dot z\in\mathcal{L}_\infty$, so $z$ is uniformly continuous.
+The reference model is stable and the reference input \(r(t)\) is bounded. Therefore, the reference model output and its derivatives are also bounded. Since the tracking error and the parameter estimation error are bounded, the plant states remain bounded, which implies that the regressor vector \(\phi\) is bounded.
 
-\paragraph{Conclusion.} Since $z\in\mathcal{L}_2\cap\mathcal{L}_\infty$ and
-$\dot z\in\mathcal{L}_\infty$, Barbalat's lemma yields
+From \eqref{eq:z_dynamics}:
 \begin{equation}
-z(t)\to 0 \qquad\text{as } t\to\infty .
+\dot{z}
+=
+-k_z z
++
+\tilde{\theta}^{T}\phi.
 \end{equation}
 
-When \(z(t)\rightarrow0\), the tracking error satisfies:
+Since \(z\), \(\tilde{\theta}\), and \(\phi\) are all bounded, it follows that \(\dot{z}\) is also bounded.
+
+\paragraph{Step 3: Applying Barbalat's lemma.}
+
+From Step 1, \(z\in\mathcal{L}_2\), and from Step 2, \(\dot{z}\) is bounded. Therefore, by Barbalat's lemma:
+\begin{equation}
+z(t)\rightarrow0
+\qquad
+\text{as}
+\qquad
+t\rightarrow\infty.
+\end{equation}
+When \(z(t)\rightarrow0\), the filtered error satisfies:
 \begin{equation}
 \ddot{e}
 +
@@ -397,16 +420,20 @@ When \(z(t)\rightarrow0\), the tracking error satisfies:
 =
 0.
 \end{equation}
- Since \(\lambda_1,\lambda_2>0\) are chosen to give stable error dynamics, it follows that:
+Since \(\lambda_1\) and \(\lambda_2\) are chosen such that the error dynamics are stable, it follows that:
 \begin{equation}
 e(t)\rightarrow0,
 \qquad
 \dot{e}(t)\rightarrow0.
 \end{equation}
-Finally, since \(e=y-y_m\), convergence of the tracking error implies:
+So the convergence of the tracking error implies:
 \begin{equation}
+e=y-y_m=0
+\quad
+\Rightarrow
+\quad
 y(t)\rightarrow y_m(t).
 \end{equation}
-Thus, the proposed adaptive controller guarantees bounded closed-loop signals and asymptotic tracking of the reference model output. $\blacksquare$
+Thus, the proposed adaptive controller guarantees that all closed-loop signals remain bounded and that the plant output asymptotically tracks the reference model output. \(\blacksquare\)
 
 \bigskip
