@@ -3,35 +3,35 @@
 % ==================================================
 \section{Discrete-Time Adaptive Controller}
 
-Implementation of the adaptive controller on a microcontroller requires a discrete-time formulation. In this section, the continuous-time adaptive controller developed in Section~2 is converted using the indirect approach. The controller is first designed in continuous time and then approximated by a discrete-time controller.
+Implementation of the adaptive controller on a microcontroller requires a discrete-time ~formulation. In this section, the continuous-time adaptive controller developed in Section~2 is converted using the indirect approach. The controller is first designed in continuous time and then approximated by a discrete-time controller.
 
 \subsection{Discrete-Time Formulation}
 
-The continuous-time controller of Section~2 is rebuilt at the sample level by approximating the error derivatives with backward differences:
+The continuous-time controller developed in Section~2 is converted into a discrete-time controller by approximating the error derivatives using backward differences:
 \begin{equation}
 \dot{e}[k] \approx \frac{e[k]-e[k-1]}{T_s},
 \qquad
 \ddot{e}[k] \approx \frac{e[k]-2e[k-1]+e[k-2]}{T_s^2}.
 \label{eq:discrete_bd}
 \end{equation}
-The filtered error \(z[k]\), the vector of known signals \(\varphi[k]\), the auxiliary reference \(y_r^{(3)}[k]\), and the control law \(u[k]\) are then evaluated using the same expressions as in Section~2, with all signals sampled at \(t=kT_s\), where \(T_s\) is the fixed sampling period of the digital controller (the time between two control updates). The control input is held constant between samples by a zero-order hold (ZOH):
+The filtered error \(z[k]\), the regressor vector \(\phi[k]\), the auxiliary signal \(y_r^{(3)}[k]\), and the control input \(u[k]\) are then evaluated using the same expressions as in Section~2, with all signals sampled at \(t=kT_s\). The sampling period \(T_s\) is the time between two consecutive control updates. The control input is held constant between samples by a zero-order hold (ZOH):
 \begin{equation}
 u(t) = u[k], \qquad kT_s \le t < (k+1)T_s.
 \end{equation}
-
-\noindent The adaptation law is discretised by forward Euler. Applying \eqref{eq:discrete_bd} gives the recurrence:
+The adaptation law is converted into a discrete-time update:
 \begin{equation}
-\hat{\theta}[k]
+\hat{\theta}[k+1]
 =
-\hat{\theta}[k-1]
-- T_s\,\Gamma\,\varphi[k]\,z[k],
+\hat{\theta}[k]
+-
+T_s\,\Gamma\,\phi[k]\,z[k].
 \label{eq:discrete_adaptation_law}
 \end{equation}
-which can be implemented directly on a microcontroller by updating the parameter estimates once every sampling period.
+This recursive equation can be implemented directly on a microcontroller by updating the parameter estimates once every sampling period.
 
 \subsection{Simulation Results}
 
-The simulation results are presented in figures~\ref{fig:discrete_tracking}--\ref{fig:zoh_detail}. The discrete-time adaptive controller tracks the reference model output while updating the parameter estimates online, and its trajectories closely follow those of the continuous-time controller from Section~4.
+The simulation results are presented in figures~\ref{fig:discrete_tracking}--\ref{fig:zoh_detail}. The discrete-time adaptive controller tracks the reference model output while updating the parameter estimates online.
 
 \begin{figure}[H]
 \centering
@@ -43,7 +43,7 @@ The simulation results are presented in figures~\ref{fig:discrete_tracking}--\re
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{figs/hw/section5_discrete_u_zoh_detail.png}
-\caption{Zoomed view of the digital control input over the first second of simulation.}
+\caption{Zoomed view of the digital control input over $0-1s$ of simulation.}
 \label{fig:zoh_detail}
 \end{figure}
 
@@ -62,9 +62,8 @@ The simulation results are presented in figures~\ref{fig:discrete_tracking}--\re
 \end{figure}
 
 \noindent The discrete-time simulation shows that the adaptive controller can be implemented using recursive difference equations. The plant remains continuous-time, while the controller is updated once every sampling period and its output is held constant between samples.
-For the selected sampling time \(T_s=0.01~\mathrm{s}\), the discrete-time controller achieves performance very similar to the continuous-time adaptive controller. The tracking response, tracking error, and parameter estimates are almost identical in both implementations.
-
+For the selected sampling time \(T_s=0.01~\mathrm{s}\), the discrete-time controller achieves performance very similar to the continuous-time adaptive controller.
 As in Section~4, the parameter estimates do not converge to their true values because the reference signal is a step input and does not provide sufficient excitation. Nevertheless, the parameter estimates remain bounded and the controller achieves accurate tracking.
-The advantage of this formulation is that it can be implemented directly on the microcontroller.
+The main advantage of this formulation is that it can be implemented directly on a microcontroller.
 
 \bigskip
